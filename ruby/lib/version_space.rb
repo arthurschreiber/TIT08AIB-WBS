@@ -45,19 +45,19 @@ class VersionSpace
     # Lösche alle Elemente aus @g, die das Beispiel enthalten
     # durch die Spezialisierungen, die das Beispiel _nicht_ enthalten,
     # aber alle vorhergegangenen positiven Beispiele
-    tmp = []
-    @g.each do |g|
+    @g = @g.inject([]) do |acc, g|
       if !more_general?(g, example)
-        tmp << g
+        acc << g
       else
         specialize(g, example, @s.first).each do |new_g|
           if @positive_examples.all? { |pe| more_general?(new_g, pe) }
-            tmp << new_g
+            acc << new_g
           end
         end
       end
-    end
-    @g = tmp.reject do |g|
+
+      acc
+    end.reject do |g|
       @g.any? do |other_g|
         g != other_g && (g & other_g) != [:*] && more_general?(other_g, g)
       end
