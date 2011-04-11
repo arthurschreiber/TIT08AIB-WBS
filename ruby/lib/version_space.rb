@@ -50,17 +50,13 @@ class VersionSpace
         acc << g
       else
         specialize(g, example, @s.first).each do |new_g|
-          if @positive_examples.all? { |pe| more_general?(new_g, pe) }
+          if @positive_examples.all? { |pe| more_general?(new_g, pe) } && !@g.any? { |other_g| g != other_g && (new_g & other_g) != [:*] && more_general?(other_g, new_g) }
             acc << new_g
           end
         end
       end
 
       acc
-    end.reject do |g|
-      @g.any? do |other_g|
-        g != other_g && (g & other_g) != [:*] && more_general?(other_g, g)
-      end
     end
     
     # Streiche alle Elemente aus @g, die spezieller sind als ein Element
