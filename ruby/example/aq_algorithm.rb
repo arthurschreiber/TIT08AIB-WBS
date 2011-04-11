@@ -32,6 +32,8 @@ groups.each do |book, examples|
   end
 end
 
-p k
+require "pp"
+
+pp k
 
 
