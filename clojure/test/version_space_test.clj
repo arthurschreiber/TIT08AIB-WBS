@@ -102,21 +102,116 @@
   )
 )
 
-(deftest test-more-complicated
-  (testing "blaaaa"
+(deftest test-more-complicated-saengerin
+  (testing "should be correctly building a version space for the 'Sänger/Sängerin' example"
     (let [vs '(((:* :* :*)) ((:_ :_ :_)))]
-      (is
-        (=
-          (version-space/positive-example vs '("Sängerin" "Jazz" "20er-50er"))
-          '(((:* :* :*)) (("Sängerin" "Jazz" "20er-50er")))
-        )
-      )
-      
       (let [vs (version-space/positive-example vs '("Sängerin" "Jazz" "20er-50er"))]
         (is
           (=
-            (version-space/negative-example vs '("Gruppe" "Pop" "70er"))
-            '((("Sängerin" :* :*) (:* "Jazz" :*) (:* :* "20er-50er")) (("Sängerin" "Jazz" "20er-50er")))
+            vs
+            '(((:* :* :*)) (("Sängerin" "Jazz" "20er-50er")))
+          )
+        )
+
+        (let [vs (version-space/negative-example vs '("Gruppe" "Pop" "70er"))]
+          (is
+            (=
+              vs
+              '((("Sängerin" :* :*) (:* "Jazz" :*) (:* :* "20er-50er")) (("Sängerin" "Jazz" "20er-50er")))
+            )
+          )
+          
+          (let [vs (version-space/negative-example vs '("Gruppe" "Pop" "80er"))]
+            (is
+              (=
+                vs
+                '((("Sängerin" :* :*) (:* "Jazz" :*) (:* :* "20er-50er")) (("Sängerin" "Jazz" "20er-50er")))
+              )
+            )
+
+            (let [vs (version-space/negative-example vs '("Sänger" "Jazz" "20er-50er"))]
+              (is
+                (=
+                  vs
+                  '((("Sängerin" :* :*)) (("Sängerin" "Jazz" "20er-50er")))
+                )
+              )
+
+              (let [vs (version-space/positive-example vs '("Sängerin" "Jazz" "50er-60er"))]
+                (is
+                  (=
+                    vs
+                    '((("Sängerin" :* :*)) (("Sängerin" "Jazz" :*)))
+                  )
+                )
+
+                (let [vs (version-space/negative-example vs '("Orchester" "Klassik" "vor 1920"))]
+                  (is
+                    (=
+                      vs
+                      '((("Sängerin" :* :*)) (("Sängerin" "Jazz" :*)))
+                    )
+                  )
+                  
+                  (let [vs (version-space/positive-example vs '("Sängerin" "Jazz" "70er"))]
+                    (is
+                      (=
+                        vs
+                        '((("Sängerin" :* :*)) (("Sängerin" "Jazz" :*)))
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+(deftest test-more-complicated-autokauf
+  (testing "should be correctly building a version space for the 'Autokauf'"
+    (let [vs '(((:* :* :* :* :* :* :* :* :* :* :*)) ((:_ :_ :_ :_ :_ :_ :_ :_ :_ :_ :_)))]
+      (let [vs (version-space/positive-example vs '("neu" "VW" "90-120" "< 2 l" "< 180" "Diesel" "< 6 l" "Minivan" "8" "silber/grau" "< 25000"))]
+        (is
+          (=
+            vs
+            '(
+              ((:* :* :* :* :* :* :* :* :* :* :*))
+              (("neu" "VW" "90-120" "< 2 l" "< 180" "Diesel" "< 6 l" "Minivan" "8" "silber/grau" "< 25000"))
+            )
+          )
+        )
+        
+        (let [vs (version-space/positive-example vs '("< 2 Jahre" "VW" "90-120" "< 2 l" "< 180" "Diesel" "< 6 l" "Minivan" "8" "grün" "< 20000"))]
+          (is
+            (=
+              vs
+              '(
+                ((:* :* :* :* :* :* :* :* :* :* :*))
+                ((:* "VW" "90-120" "< 2 l" "< 180" "Diesel" "< 6 l" "Minivan" "8" :* :*))
+              )
+            )
+          )
+          
+          (let [vs (version-space/negative-example vs '("2-5 Jahre" "Peugeot" "75-90" "< 2 l" "< 180" "Super" "< 8 l" "kompakt" "5" "silber/grau" "< 7500"))]
+            (is
+              (= vs 
+                '(
+                  (
+                    (:* "VW" :* :* :* :* :* :* :* :* :*)
+                    (:* :* "90-120" :* :* :* :* :* :* :* :*)
+                    (:* :* :* :* :* "Diesel" :* :* :* :* :*)
+                    (:* :* :* :* :* :* "< 6 l" :* :* :* :*)
+                    (:* :* :* :* :* :* :* "Minivan" :* :* :*)
+                    (:* :* :* :* :* :* :* :* "8" :* :*)
+                  )
+                  ((:* "VW" "90-120" "< 2 l" "< 180" "Diesel" "< 6 l" "Minivan" "8" :* :*))
+                )
+              )
+            )
           )
         )
       )

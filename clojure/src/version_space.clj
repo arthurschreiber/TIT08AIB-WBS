@@ -85,9 +85,32 @@
       (fn [acc g]
         (if
           (not (more-general? g example))
-          (conj acc g)
-          ; TODO: 
-          (concat acc (specialize g example (first (second vs))))
+          (concat acc (list g))
+          (concat acc
+            (reduce
+              (fn [acc new_g]
+                (if
+                  (and
+                    (not (more-general? new_g example))
+                    (every? (fn [pe] more-general? new_g pe) (second vs))
+                    (not-any?
+                      (fn [other_g]
+                        (and
+                          (not (= g other_g))
+                          (more-general? other_g new_g)
+                        )
+                      )
+                      (first vs)
+                    )
+                  )
+                  (concat acc (list new_g))
+                  acc
+                )
+              )
+             '()
+              (specialize g example (first (second vs)))
+            )
+          )
         )
       )
       '() (first vs)
