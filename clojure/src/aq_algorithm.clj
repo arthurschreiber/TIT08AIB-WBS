@@ -1,21 +1,20 @@
-(ns example
-  (:use [clojure.java.io :only (reader)])
-  (:use [clojure.string :only (split)])
+(ns aq-algorithm
+  (:require clojure.contrib.greatest-least)
+  (:use [clojure.contrib.greatest-least :only (least-by)])
 )
 
 (load "src/version_space")
 
+(defn normalize-example [example]
+  (rest (butlast example))
+)
 
 (defn get-positive-examples [groups key]
-  (map (fn [example]
-    (rest (butlast example))
-  ) (get groups key))
+  (map normalize-example (get groups key))
 )
 
 (defn get-negative-examples [groups key]
-  (map (fn [example]
-    (rest (butlast example))
-  ) (reduce concat '() (vals (dissoc groups key))))
+  (map normalize-example (reduce concat '() (vals (dissoc groups key))))
 )
 
 (defn gen-star [pos_example negatives]
@@ -29,9 +28,17 @@
   )
 )
 
+(defn select-best-generalization [gen_star]
+  ; (first gen_star)
+  (apply least-by (fn [g]
+    (reduce (fn [acc item]
+      (if (= item :*) (+ acc 1) acc)
+    ) 0 g)
+  ) gen_star)
+)
+
 (defn gen-best-generalization [pos_example negatives]
-  ; TODO "bessere" generalisierung wählen
-  (first (gen-star pos_example negatives))
+  (select-best-generalization (gen-star pos_example negatives))
 )
 
 (defn gen-concept-space-helper [positives negatives k]
@@ -49,18 +56,4 @@
 
 (defn gen-concept-space [positives negatives]
   (gen-concept-space-helper positives negatives '())
-)
-
-(let [ examples (map (fn [line] (split line #";")) (rest (line-seq (reader "input.csv"))))
-       vs (version-space/gen-version-space (count (first examples)))
-       groups (group-by (fn [example] (last example)) examples) ]
-
-  (doseq [key (keys groups)]
-    (let [ positives (get-positive-examples groups key)
-           negatives (get-negative-examples groups key) ]
-    
-      (println "K für" key)
-      (doseq [k (gen-concept-space positives negatives)] (println k))
-    )
-  )
 )
