@@ -102,6 +102,28 @@
   )
 )
 
+(deftest test-gen-list
+  (testing "should return a list containing the passed `item` `size` times"
+    (is
+      (=
+        (version-space/gen-list :* 3)
+        '(:* :* :*)
+      )
+    )
+  )
+)
+
+(deftest test-gen-version-space
+  (testing "should create a new version space of the specified `size`"
+    (is
+      (=
+        (version-space/gen-version-space 3)
+        '(((:* :* :*)) ((:_ :_ :_)))
+      )
+    )
+  )
+)
+
 (deftest test-more-complicated-saengerin
   (testing "should be correctly building a version space for the 'Sänger/Sängerin' example"
     (let [vs '(((:* :* :*)) ((:_ :_ :_)))]

@@ -124,3 +124,21 @@
     )
   )
 )
+
+(defn gen-list [item size]
+  (if
+    (<= size 0)
+    '()
+    (cons
+      item
+      (gen-list item (- size 1))
+    )
+  )
+)
+
+(defn gen-version-space [size]
+  (list
+    (list (gen-list :* size))
+    (list (gen-list :_ size))
+  )
+)
