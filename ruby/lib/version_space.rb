@@ -52,7 +52,7 @@ class VersionSpace
         specialize(g, example, @s.first).each do |new_g|
           next if more_general?(new_g, example)
           
-          if @positive_examples.all? { |pe| more_general?(new_g, pe) } && !@g.any? { |other_g| g != other_g && (new_g & other_g) != [:*] && more_general?(other_g, new_g) }
+          if @positive_examples.all? { |pe| more_general?(new_g, pe) } && !@g.any? { |other_g| g != other_g && more_general?(other_g, new_g) }
             acc << new_g
           end
         end
