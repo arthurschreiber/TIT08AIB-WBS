@@ -75,13 +75,11 @@ class VersionSpace
   end
 
   def generalize(hyp1, hyp2)
-    return [] if hyp1 == []
-
-    hyp1.each_with_index.map do |item, index|
-      if item == :_
-        hyp2[index]
-      elsif hyp2[index] == :_ || item == hyp2[index]
-        item
+    hyp1.zip(hyp2).map do |a, b|
+      if a == :_
+        b
+      elsif a == b || b == :_
+        a
       else
         :*
       end
