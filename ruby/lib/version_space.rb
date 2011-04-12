@@ -95,9 +95,7 @@ class VersionSpace
   def specialize(g, neg, s)
     get_potential_positions(g, neg, s).map do |index|
       if g[index] == :*
-        copy = g.dup
-        copy[index] = s[index]
-        copy
+        g.dup.tap { |copy| copy[index] = s[index] }
       end
     end
   end
