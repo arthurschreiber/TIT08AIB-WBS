@@ -70,8 +70,8 @@ class VersionSpace
     a == b || a == :*
   end
 
-  def more_general?(a, b)
-    a.each_with_index.all? { |item, i| includes?(item, b[i]) }
+  def more_general?(hyp1, hyp2)
+    hyp1.zip(hyp2).all?(&method(:includes?))
   end
 
   def generalize(hyp1, hyp2)
