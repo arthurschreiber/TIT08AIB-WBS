@@ -1,9 +1,9 @@
 class VersionSpace
   attr_reader :s, :g
   
-  def initialize(g, s)
-    @g = g
-    @s = s
+  def initialize(size)
+    @g = [[:*] * size]
+    @s = [[:_] * size]
     @positive_examples = []
   end
   

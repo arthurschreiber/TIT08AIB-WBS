@@ -19,7 +19,9 @@ groups.each do |book, examples|
   until positive_beispiele.empty?
     a = positive_beispiele.shift
 
-    vs = VersionSpace.new([[:*] * (a.size - 1)], [a[0..-2]])
+    vs = VersionSpace.new(a.size - 1)
+    vs.positive_example(a[0..-2])
+    
     negative_beispiele.each do |bsp|
       break if vs.terminated?
       vs.negative_example bsp[0..-2]

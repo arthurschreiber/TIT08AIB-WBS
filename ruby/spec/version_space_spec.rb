@@ -3,7 +3,7 @@ require File.expand_path('../../lib/version_space', __FILE__)
 
 describe VersionSpace do
   before :each do
-    @vs = VersionSpace.new([[:*, :*, :*]], [[:_, :_, :_]])
+    @vs = VersionSpace.new(3)
   end
   
   it "should be correctly building a version space for the 'Sänger/Sängerin' example" do
@@ -37,10 +37,7 @@ describe VersionSpace do
   end
   
   it "should be correctly building a version space for the 'Autokauf'" do
-    @vs = VersionSpace.new(
-      [[:*, :*, :*, :*, :*, :*, :*, :*, :*, :*, :*]],
-      [[:_, :_, :_, :_, :_, :_, :_, :_, :_, :_, :_]]
-    )
+    @vs = VersionSpace.new(11)
     
     @vs.positive_example(["neu", "VW", "90-120", "< 2 l", "< 180", "Diesel", "< 6 l", "Minivan", "8", "silber/grau", "< 25000"])
     @vs.g.should == [[:*, :*, :*, :*, :*, :*, :*, :*, :*, :*, :*]]
@@ -151,8 +148,8 @@ describe VersionSpace do
     @vs.should be_terminated
   end
 
-  it "should fail to build a VersionSpace for the example 'Fußball'" do
-    @vs = VersionSpace.new([[:*, :*]], [[:_, :_]])
+  it "should terminate when trying to build a VersionSpace for the example 'Fußball'" do
+    @vs = VersionSpace.new(2)
     @vs.positive_example(["rund", "schwarzrot"])
     @vs.positive_example(["rund", "schwarzweiss"])
 
