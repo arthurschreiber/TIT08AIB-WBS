@@ -1,9 +1,11 @@
+require File.join(File.dirname(__FILE__), "utils")
+
 class VersionSpace
   attr_reader :s, :g
   
-  def initialize(g, s)
-    @g = g
-    @s = s
+  def initialize(size)
+    @g = [[:*] * size]
+    @s = [[:_] * size]
     @positive_examples = []
   end
   
@@ -34,13 +36,19 @@ class VersionSpace
     end
   end
   
-  def done?
+  def terminated?
     @g == @s || @g.empty? || @s.empty?
+  end
+  
+  def terminated_successfully?
+    not @g.empty? and not @s.empty? 
   end
   
   def negative_example(example)
     # Lösche alle aus @s die dem Beispiel entsprechen
     @s.reject! { |s| more_general?(s, example) }
+    
+    return if @s.empty?
     
     # Lösche alle Elemente aus @g, die das Beispiel enthalten
     # durch die Spezialisierungen, die das Beispiel _nicht_ enthalten,
@@ -64,14 +72,6 @@ class VersionSpace
     # Streiche alle Elemente aus @g, die spezieller sind als ein Element
     # aus @s
     @g.reject! { |g| @s.any? { |s| more_general?(s, g) }}
-  end
-  
-  def includes?(a, b)
-    a == b || a == :*
-  end
-
-  def more_general?(hyp1, hyp2)
-    hyp1.zip(hyp2).all?(&method(:includes?))
   end
 
   def generalize(hyp1, hyp2)

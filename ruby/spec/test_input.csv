@@ -1,0 +1,6 @@
+Nr;Altersgruppe;Geschlecht;Verheiratet;Kinderzahl;Abschluss;Beruf;Einkommen;Buch
+0;19-24;m;nein;0;keiner;Angestellter;3000-3999;Buch_C
+1;25-35;m;nein;1;Realschule;Arbeitslos;1000-1999;Buch_C
+2;36-49;m;nein;0;Hochschule;Angestellter;3000-3999;Buch_C
+3;25-35;m;ja;1;Hochschule;Fuehrungskraft;5000 und mehr;Buch_C
+
