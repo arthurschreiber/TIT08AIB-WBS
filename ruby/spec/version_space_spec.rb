@@ -43,17 +43,14 @@ describe VersionSpace do
     )
     
     @vs.positive_example(["neu", "VW", "90-120", "< 2 l", "< 180", "Diesel", "< 6 l", "Minivan", "8", "silber/grau", "< 25000"])
-
     @vs.g.should == [[:*, :*, :*, :*, :*, :*, :*, :*, :*, :*, :*]]
     @vs.s.should == [["neu", "VW", "90-120", "< 2 l", "< 180", "Diesel", "< 6 l", "Minivan", "8", "silber/grau", "< 25000"]]
 
     @vs.positive_example(["< 2 Jahre", "VW", "90-120", "< 2 l", "< 180", "Diesel", "< 6 l", "Minivan", "8", "grün", "< 20000"])
-
     @vs.g.should == [[:*, :*, :*, :*, :*, :*, :*, :*, :*, :*, :*]]
     @vs.s.should == [[:*, "VW", "90-120", "< 2 l", "< 180", "Diesel", "< 6 l", "Minivan", "8", :*, :*]]
 
     @vs.negative_example(["2-5 Jahre", "Peugeot", "75-90", "< 2 l", "< 180", "Super", "< 8 l", "kompakt", "5", "silber/grau", "< 7500"])
-
     @vs.g.should == [
       [:*, "VW", :*, :*, :*, :*, :*, :*, :*, :*, :*],
       [:*, :*, "90-120", :*, :*, :*, :*, :*, :*, :*, :*],
@@ -65,7 +62,6 @@ describe VersionSpace do
     @vs.s.should == [[:*, "VW", "90-120", "< 2 l", "< 180", "Diesel", "< 6 l", "Minivan", "8", :*, :*]]
 
     @vs.negative_example(["5-10 Jahre", "VW", "50-75", "< 1.6 l", "< 180", "Benzin", "< 8", "Kompakt", "5", "rot", "< 7500"])
-
     @vs.g.should == [
       [:*, "VW", :*, "< 2 l", :*, :*, :*, :*, :*, :*, :*],
       [:*, :*, "90-120", :*, :*, :*, :*, :*, :*, :*, :*],
@@ -77,7 +73,6 @@ describe VersionSpace do
     @vs.s.should == [[:*, "VW", "90-120", "< 2 l", "< 180", "Diesel", "< 6 l", "Minivan", "8", :*, :*]]
     
     @vs.negative_example(["< 2 Jahre", "Smart", "30-50", "< 1 l", "< 135", "Super", "< 5", "Kompakt", "2", "bunt", "< 7500"])
-
     @vs.g.should == [
       [:*, "VW", :*, "< 2 l", :*, :*, :*, :*, :*, :*, :*],
       [:*, :*, "90-120", :*, :*, :*, :*, :*, :*, :*, :*],
@@ -89,7 +84,6 @@ describe VersionSpace do
     @vs.s.should == [[:*, "VW", "90-120", "< 2 l", "< 180", "Diesel", "< 6 l", "Minivan", "8", :*, :*]]
     
     @vs.negative_example(["< 1 Jahr", "Mercedes", "150-200", "< 2 l", "< 250", "Super", "< 10", "Cabrio", "2", "schwarz", "< 30000"])
-
     @vs.g.should == [
       [:*, "VW", :*, "< 2 l", :*, :*, :*, :*, :*, :*, :*],
       [:*, :*, "90-120", :*, :*, :*, :*, :*, :*, :*, :*],
@@ -101,7 +95,6 @@ describe VersionSpace do
     @vs.s.should == [[:*, "VW", "90-120", "< 2 l", "< 180", "Diesel", "< 6 l", "Minivan", "8", :*, :*]]
     
     @vs.negative_example(["2-5 Jahre", "BMW", "150-200", "< 2.5 l", "< 250", "Super", "< 8", "Limousine", "5", "grün", "< 20000"])
-
     @vs.g.should == [
       [:*, "VW", :*, "< 2 l", :*, :*, :*, :*, :*, :*, :*],
       [:*, :*, "90-120", :*, :*, :*, :*, :*, :*, :*, :*],
@@ -113,7 +106,6 @@ describe VersionSpace do
     @vs.s.should == [[:*, "VW", "90-120", "< 2 l", "< 180", "Diesel", "< 6 l", "Minivan", "8", :*, :*]]
 
     @vs.negative_example(["< 1 Jahr", "Peugeot", "120-150", "< 2.5 l", "< 250", "Diesel", "< 8", "Limousine", "5", "grün", "< 50000"])
-
     @vs.g.should == [
       [:*, "VW", :*, "< 2 l", :*, :*, :*, :*, :*, :*, :*],
       [:*, :*, "90-120", :*, :*, :*, :*, :*, :*, :*, :*],
@@ -125,6 +117,36 @@ describe VersionSpace do
       [:*, :*, :*, :*, :*, :*, :*, :*, "8", :*, :*]
     ]
     @vs.s.should == [[:*, "VW", "90-120", "< 2 l", "< 180", "Diesel", "< 6 l", "Minivan", "8", :*, :*]]
+
+    @vs.negative_example(["2-5 Jahre", "Ferrari", "> 200", "> 2.5 l", "> 250", "Super", "> 12", "Limousine", "2", "rot", "> 50000"])
+    @vs.g.should == [
+      [:*, "VW", :*, "< 2 l", :*, :*, :*, :*, :*, :*, :*],
+      [:*, :*, "90-120", :*, :*, :*, :*, :*, :*, :*, :*],
+      [:*, "VW", :*, :*, :*, "Diesel", :*, :*, :*, :*, :*],
+      [:*, :*, :*, "< 2 l", :*, "Diesel", :*, :*, :*, :*, :*],
+      [:*, :*, :*, :*, "< 180", "Diesel", :*, :*, :*, :*, :*],
+      [:*, :*, :*, :*, :*, :*, "< 6 l", :*, :*, :*, :*],
+      [:*, :*, :*, :*, :*, :*, :*, "Minivan", :*, :*, :*],
+      [:*, :*, :*, :*, :*, :*, :*, :*, "8", :*, :*]
+    ]
+    @vs.s.should == [[:*, "VW", "90-120", "< 2 l", "< 180", "Diesel", "< 6 l", "Minivan", "8", :*, :*]]
+
+    @vs.negative_example(["> 10 Jahre", "Porsche", "> 200", "> 2.5 l", "> 250", "Super", "< 12", "Limousine", "2", "gelb", "< 30000"])
+    @vs.g.should == [
+      [:*, "VW", :*, "< 2 l", :*, :*, :*, :*, :*, :*, :*],
+      [:*, :*, "90-120", :*, :*, :*, :*, :*, :*, :*, :*],
+      [:*, "VW", :*, :*, :*, "Diesel", :*, :*, :*, :*, :*],
+      [:*, :*, :*, "< 2 l", :*, "Diesel", :*, :*, :*, :*, :*],
+      [:*, :*, :*, :*, "< 180", "Diesel", :*, :*, :*, :*, :*],
+      [:*, :*, :*, :*, :*, :*, "< 6 l", :*, :*, :*, :*],
+      [:*, :*, :*, :*, :*, :*, :*, "Minivan", :*, :*, :*],
+      [:*, :*, :*, :*, :*, :*, :*, :*, "8", :*, :*]
+    ]
+    @vs.s.should == [[:*, "VW", "90-120", "< 2 l", "< 180", "Diesel", "< 6 l", "Minivan", "8", :*, :*]]
+
+    @vs.positive_example(["neu", "Mercedes", "> 200", "> 2.5l", "< 250", "Diesel", "< 8", "Kombi", "5", "silber/grau", "< 50000"])
+    @vs.g.should == []
+    @vs.s.should == [[:*, :*, :*, :*, :*, "Diesel", :*, :*, :*, :*, :*]]
   end
 
   describe "#more_general?" do
