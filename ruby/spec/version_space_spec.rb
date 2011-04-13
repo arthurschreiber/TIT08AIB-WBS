@@ -149,6 +149,20 @@ describe VersionSpace do
     @vs.s.should == [[:*, :*, :*, :*, :*, "Diesel", :*, :*, :*, :*, :*]]
   end
 
+  it "should fail to build a VersionSpace for the example 'Fußball'" do
+    @vs = VersionSpace.new([[:*, :*]], [[:_, :_]])
+    @vs.positive_example(["rund", "schwarzrot"])
+    @vs.positive_example(["rund", "schwarzweiss"])
+
+    @vs.g.should == [[:*, :*]]
+    @vs.s.should == [["rund", :*]]
+    
+    @vs.negative_example(["rund", "blau"])
+    
+    @vs.g.should == []
+    @vs.s.should == []
+  end
+
   describe "#more_general?" do
     it "should return true if the first list is equal to the second" do
       @vs.more_general?(["a"], ["a"]).should be_true
