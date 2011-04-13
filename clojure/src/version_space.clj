@@ -21,18 +21,17 @@
   (every? true? (map includes? a b))
 )
 
+;; Gibt zurück, ob eine Position spezialisiert werden kann.
+(defn position-can-be-specialized? [g_item neg_item s_item]
+  (and (= g_item :*) (not= s_item neg_item))
+)
+
 ;; Gibt eine Liste von Positionen zurück, an denen `g`
 ;; spezialisiert werden kann.
 (defn get-potential-positions [g neg s]
-  (keep-indexed (fn [index potential]
-    (if (true? potential) index)
-  ) (map (fn [g_item neg_item s_item]
-      (and
-        (= g_item :*)
-        (not (= s_item neg_item))
-      )
-    ) g neg s)
-  )
+  (keep-indexed (fn [index specializable]
+    (if specializable index)
+  ) (map position-can-be-specialized? g neg s))
 )
 
 ;; Spezialisiert `g` an der Position `pos`
@@ -55,26 +54,26 @@
 ;; Der Versionsraum `vs` wird mit Hilfe des Positiv-Beispiels
 ;; `example` verfeinert
 (defn positive-example [vs example]
-  (list
-    ;; Lösche alle Elemente aus G, die das Positiv-Beispiel nicht enthalten
-    (filter (fn [g]
-      (more-general? g example)
-    ) (first vs))
+  (let [ G (first vs) S (second vs) ]
+    ;; Ein neuer Versionsraum...
+    (list
+      ;; ... in dem aus G die Hypothesen entfernt wurden,
+      ;;     die das Positiv-Beispiel nicht enthalten
+      (filter #(more-general? %1 example) G)
     
-    ;; Streiche alle Elemente von S, die allgemeiner sind als ein Element von G
-    (filter (fn [s]
-      (not-any? (fn [g]
-        (more-general? s g)
-      ) (first vs))
-    ) (map (fn [s]
-      ;; Ersetze alle Elemente aus S, die das Positiv-Beispiel nicht
-      ;; enthalten durch eine Verallgemeinerung
-      (if
-        (not (more-general? s example))
-        (generalize s example)
-        s
+      ;; Streiche alle Elemente von S, die allgemeiner sind als ein Element von G
+      (filter
+        (fn [s] (not-any? #(more-general? s %1) G))
+        (map (fn [s]
+          ;; Ersetze alle Elemente aus S, die das Positiv-Beispiel nicht
+          ;; enthalten durch eine Verallgemeinerung
+          (if (not (more-general? s example))
+            (generalize s example)
+            s
+          )
+        ) S)
       )
-    ) (second vs)) )
+    )
   )
 )
 

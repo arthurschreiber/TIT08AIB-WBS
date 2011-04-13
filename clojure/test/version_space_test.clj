@@ -35,6 +35,16 @@
   )
 )
 
+(deftest test-position-can-be-specialized?
+  (testing "should return true if the position can be specialized"
+    (is (version-space/position-can-be-specialized? :* "a" "b"))
+    (is (version-space/position-can-be-specialized? :* "a" "c"))
+    
+    (is (not (version-space/position-can-be-specialized? :* "a" "a")))
+    (is (not (version-space/position-can-be-specialized? "a" "a" "b")))
+  )
+)
+
 (deftest test-more-general?
   (testing "should return true if the first list is equal to the second"
     (is (version-space/more-general? '("a") '("a")))
@@ -241,6 +251,20 @@
   )
 )
 
+(deftest test-terminating-example-fussball
+  (testing "should terminate when trying to build a version space for the example 'Fußball'"
+    (let [vs '(((:* :*)) ((:_ :_)))]
+      (let [vs (version-space/positive-example vs '("rund" "schwarzrot"))]
+        (let [vs (version-space/positive-example vs '("rund" "schwarzweiss"))]
+          (is (= vs '(((:* :*)) (("rund" :*))) ) )
 
+          (let [vs (version-space/negative-example vs '("rund" "blau"))]
+            (is (= vs '(() ()) ) )
+          )
+        )
+      )
+    )
+  )
+)
 
 (run-tests)
