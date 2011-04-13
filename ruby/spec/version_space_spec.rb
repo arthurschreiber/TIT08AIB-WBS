@@ -125,18 +125,6 @@ describe VersionSpace do
     ]
     @vs.s.should == [[:*, "VW", "90-120", "< 2 l", "< 180", "Diesel", "< 6 l", "Minivan", "8", :*, :*]]
   end
-  
-  describe "#includes?" do
-    it "returns true if both parameters are equal" do
-      @vs.includes?("a", "a").should be_true
-      @vs.includes?("a", "b").should be_false
-    end
-
-    it "returns true if the first parameter is more general" do
-      @vs.includes?(:*, "a").should be_true
-      @vs.includes?(:*, "b").should be_true
-    end
-  end
 
   describe "#more_general?" do
     it "should return true if the first list is equal to the second" do

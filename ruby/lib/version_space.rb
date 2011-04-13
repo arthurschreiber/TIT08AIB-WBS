@@ -66,12 +66,8 @@ class VersionSpace
     @g.reject! { |g| @s.any? { |s| more_general?(s, g) }}
   end
   
-  def includes?(a, b)
-    a == b || a == :*
-  end
-
   def more_general?(hyp1, hyp2)
-    hyp1.zip(hyp2).all?(&method(:includes?))
+    hyp1.zip(hyp2).all? { |a, b| a == b || a == :* }
   end
 
   def generalize(hyp1, hyp2)
