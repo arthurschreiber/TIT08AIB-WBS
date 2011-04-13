@@ -48,7 +48,7 @@ class VersionSpace
     @g = @g.inject([]) do |acc, g|
       if !more_general?(g, example)
         acc << g
-      else
+      elsif !@s.empty?
         specialize(g, example, @s.first).each do |new_g|
           next if more_general?(new_g, example)
           
