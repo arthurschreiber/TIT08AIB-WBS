@@ -57,8 +57,8 @@
   (let [ G (first vs) S (second vs) ]
     ;; Ein neuer Versionsraum...
     (list
-      ;; ... in dem aus G die Hypothesen entfernt wurden,
-      ;;     die das Positiv-Beispiel nicht enthalten
+      ;; G ohne diejenigen Hypothesen,
+      ;; die das Positiv-Beispiel nicht enthalten
       (filter #(more-general? %1 example) G)
     
       ;; Streiche alle Elemente der neuen S-Menge,
@@ -125,12 +125,7 @@
       ) '() G )
     
       ;; Alle Elemente aus S entfernen, die dem negativen Beispiel entsprechen
-      (filter
-        (fn [s]
-          (not (more-general? s example))
-        )
-        S
-      )
+      (filter #(not (more-general? %1 example)) S)
     )  
   )
 )
