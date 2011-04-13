@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require File.expand_path('../../lib/version_space', __FILE__)
 
 describe VersionSpace do
