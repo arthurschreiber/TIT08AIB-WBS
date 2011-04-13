@@ -1,8 +1,9 @@
+# encoding: UTF-8
 require File.join(File.dirname(__FILE__), '..', 'lib', 'version_space')
 
 describe VersionSpace do
   before :each do
-    @vs = VersionSpace.new([[:*, :*, :*]], [[:_, :_, :_]])
+    @vs = VersionSpace.new(3)
   end
   
   it "should be correctly building a version space for the 'Sänger/Sängerin' example" do
@@ -36,10 +37,7 @@ describe VersionSpace do
   end
   
   it "should be correctly building a version space for the 'Autokauf'" do
-    @vs = VersionSpace.new(
-      [[:*, :*, :*, :*, :*, :*, :*, :*, :*, :*, :*]],
-      [[:_, :_, :_, :_, :_, :_, :_, :_, :_, :_, :_]]
-    )
+    @vs = VersionSpace.new(11)
     
     @vs.positive_example(["neu", "VW", "90-120", "< 2 l", "< 180", "Diesel", "< 6 l", "Minivan", "8", "silber/grau", "< 25000"])
 
@@ -126,26 +124,6 @@ describe VersionSpace do
     @vs.s.should == [[:*, "VW", "90-120", "< 2 l", "< 180", "Diesel", "< 6 l", "Minivan", "8", :*, :*]]
   end
   
-  describe "#includes?" do
-    it "returns true if both parameters are equal" do
-      @vs.includes?("a", "a").should be_true
-      @vs.includes?("a", "b").should be_false
-    end
-
-    it "returns true if the first parameter is more general" do
-      @vs.includes?(:*, "a").should be_true
-      @vs.includes?(:*, "b").should be_true
-    end
-  end
-
-  describe "#more_general?" do
-    it "should return true if the first list is equal to the second" do
-      @vs.more_general?(["a"], ["a"]).should be_true
-      @vs.more_general?([:*, "b"], ["a", "b"]).should be_true
-      @vs.more_general?(["<18", :*, :*, :*, :*, :*, :*], ["19-24", "w", "nein", "0", "keiner", "Selbstaendig", "3000-3999"]).should be_false
-    end
-  end
-
   describe "#generalize" do
     it "returns an empty list if passed an empty hypothesis" do
       @vs.generalize([], ["a", "b"]).should == []
