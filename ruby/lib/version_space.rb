@@ -34,7 +34,7 @@ class VersionSpace
     end
   end
   
-  def done?
+  def terminated?
     @g == @s || @g.empty? || @s.empty?
   end
   

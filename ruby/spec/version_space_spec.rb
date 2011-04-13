@@ -147,6 +147,8 @@ describe VersionSpace do
     @vs.positive_example(["neu", "Mercedes", "> 200", "> 2.5l", "< 250", "Diesel", "< 8", "Kombi", "5", "silber/grau", "< 50000"])
     @vs.g.should == []
     @vs.s.should == [[:*, :*, :*, :*, :*, "Diesel", :*, :*, :*, :*, :*]]
+
+    @vs.should be_terminated
   end
 
   it "should fail to build a VersionSpace for the example 'Fußball'" do
@@ -161,6 +163,8 @@ describe VersionSpace do
     
     @vs.g.should == []
     @vs.s.should == []
+
+    @vs.should be_terminated
   end
 
   describe "#more_general?" do

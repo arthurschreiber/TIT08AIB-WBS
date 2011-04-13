@@ -21,7 +21,7 @@ groups.each do |book, examples|
 
     vs = VersionSpace.new([[:*] * (a.size - 1)], [a[0..-2]])
     negative_beispiele.each do |bsp|
-      break if vs.done?
+      break if vs.terminated?
       vs.negative_example bsp[0..-2]
     end
   
