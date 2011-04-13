@@ -61,7 +61,8 @@
       ;;     die das Positiv-Beispiel nicht enthalten
       (filter #(more-general? %1 example) G)
     
-      ;; Streiche alle Elemente von S, die allgemeiner sind als ein Element von G
+      ;; Streiche alle Elemente der neuen S-Menge,
+      ;; die allgemeiner sind als ein Element von G
       (filter
         (fn [s] (not-any? #(more-general? s %1) G))
         (map (fn [s]
@@ -80,54 +81,57 @@
 ;; Der Versionsraum `vs` wird mit dem übergebenen Negativ-Beispiel
 ;; `example` verfeinert.
 (defn negative-example [vs example]
-  (list
-    (reduce (fn [acc g]
-      (if
-        (not (more-general? g example))
-        (concat acc (list g))
-        (concat acc
-          ;; Generiere alle Spezialisierungen und sammele diejenigen, die alle
-          ;; Kriterien erfüllen.
-          (reduce (fn [acc new_g]
-            (if
-              (and
-                ;; Die Spezialisierung darf das negative Beispiel nicht enthalten
-                (not (more-general? new_g example))
-                ;; Alle bisher vorgelegten Beispiele müssen enthalten sein
-                ;; NOTE: Das stimmt hier eigentlich nicht _direkt_. Wir testn hier
-                ;;       eigentlich gegen die Elemente von S. Da S aber in unserem
-                ;;       Fall dem positiven Beispielen entspricht, passt das soweit.
-                (every? (fn [pe]
-                  more-general? new_g pe
-                ) (second vs))
-                ;; Kein Element von G darf die neue Spezialisierung enthalten,
-                ;; da sie ja sonst überflüssig ist.
-                (not-any? (fn [other_g]
-                  (and
-                    (not (= g other_g))
-                    (more-general? other_g new_g)
-                  )
-                ) (first vs) )
+  (let [ G (first vs) S (second vs) ]
+    ;; Ein neuer Versionsraum ...
+    (list
+      (reduce (fn [acc g]
+        (if
+          (not (more-general? g example))
+          (concat acc (list g))
+          (concat acc
+            ;; Generiere alle Spezialisierungen und sammele diejenigen, die alle
+            ;; Kriterien erfüllen.
+            (reduce (fn [acc new_g]
+              (if
+                (and
+                  ;; Die Spezialisierung darf das negative Beispiel nicht enthalten
+                  (not (more-general? new_g example))
+                  ;; Alle bisher vorgelegten Beispiele müssen enthalten sein
+                  ;; NOTE: Das stimmt hier eigentlich nicht _direkt_. Wir testen hier
+                  ;;       eigentlich gegen die Elemente von S. Da S aber in unserem
+                  ;;       Fall dem positiven Beispielen entspricht, passt das soweit.
+                  (every? (fn [pe]
+                    more-general? new_g pe
+                  ) S)
+                  ;; Kein Element von G darf die neue Spezialisierung enthalten,
+                  ;; da sie ja sonst überflüssig ist.
+                  (not-any? (fn [other_g]
+                    (and
+                      (not (= g other_g))
+                      (more-general? other_g new_g)
+                    )
+                  ) G)
+                )
+                ;; Die neue Spezialisierung erfüllt alle Kriterien
+                ;; -> wird zum Akkumulator hinzugefügt.
+                (concat acc (list new_g))
+                ;; Die neue Spezialisierung erfüllt die Kriterien nicht
+                ;; -> wird nicht zum Akkumulator hinzugefügt.
+                acc
               )
-              ;; Die neue Spezialisierung erfüllt alle Kriterien
-              ;; -> wird zum Akkumulator hinzugefügt.
-              (concat acc (list new_g))
-              ;; Die neue Spezialisierung erfüllt die Kriterien nicht
-              ;; -> wird nicht zum Akkumulator hinzugefügt.
-              acc
-            )
-          ) '() (specialize g example (first (second vs))) )
+            ) '() (specialize g example (first S)) )
+          )
         )
-      )
-    ) '() (first vs) )
+      ) '() G )
     
-    ;; Alle Elemente aus S entfernen, die dem negativen Beispiel entsprechen
-    (filter
-      (fn [s]
-        (not (more-general? s example))
+      ;; Alle Elemente aus S entfernen, die dem negativen Beispiel entsprechen
+      (filter
+        (fn [s]
+          (not (more-general? s example))
+        )
+        S
       )
-      (second vs)
-    )
+    )  
   )
 )
 
