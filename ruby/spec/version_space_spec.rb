@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), '..', 'lib', 'version_space')
+require File.expand_path('../../lib/version_space', __FILE__)
 
 describe VersionSpace do
   before :each do
