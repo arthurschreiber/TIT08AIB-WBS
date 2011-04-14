@@ -72,4 +72,58 @@
   )
 )
 
+(define-test test-more-complicated-saengerin
+  "should be correctly building a version space for the 'Sänger/Sängerin' example"
+  (let ((vs '((("*" "*" "*")) (("_" "_" "_")))))
+    (let ((vs (positive-example vs '("Sängerin" "Jazz" "20er-50er"))))
+      (assert-equal
+        '((("*" "*" "*")) (("Sängerin" "Jazz" "20er-50er")))
+        vs
+      )
+
+      (let ((vs (negative-example vs '("Gruppe" "Pop" "70er"))))
+        (assert-equal
+          '((("Sängerin" "*" "*") ("*" "Jazz" "*") ("*" "*" "20er-50er")) (("Sängerin" "Jazz" "20er-50er")))
+          vs
+        )
+        
+        (let ((vs (negative-example vs '("Gruppe" "Pop" "80er"))))
+          (assert-equal
+            '((("Sängerin" "*" "*") ("*" "Jazz" "*") ("*" "*" "20er-50er")) (("Sängerin" "Jazz" "20er-50er")))
+            vs
+          )
+      
+          (let ((vs (negative-example vs '("Sänger" "Jazz" "20er-50er"))))
+            (assert-equal
+              '((("Sängerin" "*" "*")) (("Sängerin" "Jazz" "20er-50er")))
+              vs
+            )
+      
+            (let ((vs (positive-example vs '("Sängerin" "Jazz" "50er-60er"))))
+              (assert-equal
+                '((("Sängerin" "*" "*")) (("Sängerin" "Jazz" "*")))
+                vs
+              )
+      
+              (let ((vs (negative-example vs '("Orchester" "Klassik" "vor 1920"))))
+                (assert-equal
+                  '((("Sängerin" "*" "*")) (("Sängerin" "Jazz" "*")))
+                  vs
+                )
+                
+                (let ((vs (positive-example vs '("Sängerin" "Jazz" "70er"))))
+                  (assert-equal
+                    '((("Sängerin" "*" "*")) (("Sängerin" "Jazz" "*")))
+                    vs
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
 (run-tests)
