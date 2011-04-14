@@ -30,30 +30,34 @@
 
 ; --- specialize ---
 
-(defun get-potential-positions (g neg s pos poslist)  
-  (cond ((null g) poslist)
-        ((equal (car g) "*")
-         (cond ((equal (car neg) (car s)) 
-                (get-potential-positions (cdr g) (cdr neg) (cdr s) (+ pos 1) poslist))
-               (T (get-potential-positions (cdr g) (cdr neg) (cdr s) (+ pos 1) (cons pos poslist)))))
-        (T (get-potential-positions (cdr g) (cdr neg) (cdr s) (+ pos 1) poslist))
-))
+(defun position-can-be-specialized? (g_item neg_item s_item)
+  (and (equal g_item "*") (not (equal s_item neg_item)))
+)
 
+(defun get-potential-positions (g neg s)
+  ;; Holy Crap is this ugly ...
+  (loop for g_item in g
+    for neg_item in neg
+    for s_item in s
+    for i from 0
+    if (position-can-be-specialized? g_item neg_item s_item)
+    collect i
+  )
+)
 
-(defun specialize-first-attribute (g s)
-  (cond ((equal (car g) "*") (cons (car s) (cdr g)))
-        (T nil)))
-         
-(defun specialize-position (g neg s pos)
-  (cond ((= pos 0) (specialize-first-attribute g s))
-        ((> pos 0) (cons (car g)
-                         (specialize-position (cdr g) (cdr neg) (cdr s) (- pos 1))))))
+;; Spezialisiert `g` an der Position `pos`
+(defun specialize-position (g s pos)
+  (if (= pos 0)
+    (cons (first s) (rest g))
+    (cons (first g) (specialize-position (rest g) (rest s) (- pos 1)))
+  )
+)
 
- 
 (defun specialize (g neg s)
-  (let ((pos (get-potential-positions g neg s 0 nil)))
-    (mapcar #'(lambda (x) (specialize-position g neg s x)) pos)))
-
+  (mapcar #'(lambda (pos)
+    (specialize-position g s pos)
+  ) (get-potential-positions g neg s))
+)
 
 ; --- how to read an exampleset from a file:
 

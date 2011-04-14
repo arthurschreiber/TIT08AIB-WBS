@@ -37,12 +37,28 @@
 (define-test test-get-potential-positions
   "should return a list of positions that can be specialized"
   (assert-equal '()
-    (get-potential-positions '("rund" "blau") '("rund" "gelb") '("rund" "blau") 0 '())
+    (get-potential-positions '("rund" "blau") '("rund" "gelb") '("rund" "blau"))
   )
   
   (assert-equal '(1)
-    (get-potential-positions '("rund" "*") '("rund" "gelb") '("rund" "blau") 0 '())
+    (get-potential-positions '("rund" "*") '("rund" "gelb") '("rund" "blau"))
   )
 )
+
+(define-test test-specialize
+  "should return a list of specialized hypotheses"
+  (assert-equal '(("rund" "blau"))
+    (specialize '("rund" "*") '("rund" "gelb") '("rund" "blau"))
+  )
+
+  (assert-equal '(("rund" "*"))
+    (specialize '("*" "*") '("eckig" "blau") '("rund" "blau"))
+  )
+
+  (assert-equal '(("rund" "*" "*") ("*" "*" "klein"))
+    (specialize '("*" "*" "*") '("eckig" "blau" "groß") '("rund" "blau" "klein"))
+  )
+)
+
 
 (run-tests)
