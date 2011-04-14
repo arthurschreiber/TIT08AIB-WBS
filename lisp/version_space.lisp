@@ -59,6 +59,25 @@
   ) (get-potential-positions g neg s))
 )
 
+;; Generiert eine neue Liste, in der `item` `size` mal vorkommt.
+(defun gen-list (item size)
+  (if (<= size 0)
+    '()
+    (cons
+      item
+      (gen-list item (- size 1))
+    )
+  )
+)
+
+;; Generiert einen neuen, leeren Versionsraum
+(defun gen-version-space (size)
+  (list
+    (list (gen-list "*" size))
+    (list (gen-list "_" size))
+  )
+)
+
 ; --- how to read an exampleset from a file:
 
 ; --- helper / makes the result more readable in case there are "nil" entries

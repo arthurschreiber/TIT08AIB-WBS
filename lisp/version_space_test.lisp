@@ -60,5 +60,16 @@
   )
 )
 
+(define-test test-gen-list
+  "should return a list containing the passed `item` `size` times"
+  (assert-equal '("*" "*" "*") (gen-list "*" 3) )
+)
+
+(define-test test-gen-version-space
+  "should create a new version space of the specified `size`"
+  (assert-equal '((("*" "*" "*")) (("_" "_" "_")))
+    (gen-version-space 3)
+  )
+)
 
 (run-tests)
