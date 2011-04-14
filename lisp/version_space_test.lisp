@@ -34,4 +34,15 @@
   (assert-true (includes? "*" "b"))
 )
 
+(define-test test-get-potential-positions
+  "should return a list of positions that can be specialized"
+  (assert-equal '()
+    (get-potential-positions '("rund" "blau") '("rund" "gelb") '("rund" "blau") 0 '())
+  )
+  
+  (assert-equal '(1)
+    (get-potential-positions '("rund" "*") '("rund" "gelb") '("rund" "blau") 0 '())
+  )
+)
+
 (run-tests)
