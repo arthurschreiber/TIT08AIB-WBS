@@ -1,12 +1,3 @@
-       
-; Version Space 
-; -------------
-
-; Examples :   
-;
-;  generalize - a VS generalization for 2 hypotheses 
-;  specialize - the set "G" is specialized, in this case: one element of g
-
 (defun generalize (hyp1 hyp2)
   (mapcar #'(lambda (a b)
     (cond
@@ -18,8 +9,6 @@
   ) hyp1 hyp2)
 )
 
-; --- some helpers ---
-
 (defun includes? (x y)
   (or (equal x y) (equal x "*"))
 )
@@ -28,7 +17,6 @@
   (every 'includes? a b)
 )
 
-; --- specialize ---
 
 (defun position-can-be-specialized? (g_item neg_item s_item)
   (and (equal g_item "*") (not (equal s_item neg_item)))
@@ -156,30 +144,3 @@
     )  
   )
 )
-
-; --- how to read an exampleset from a file:
-
-; --- helper / makes the result more readable in case there are "nil" entries
-
-(defun prune (x)
-  (cond ((null x) nil)
-        ((null (car x)) (prune (cdr x)))
-        (T (cons (car x) (prune (cdr x))))))
-
-(defun read-exampleset (file)
-   (LET ((STREAM (OPEN file :DIRECTION :INPUT)))
-     (DO ((expression NIL (READ STREAM NIL STREAM)) 
-          (xprlist nil (cons expression xprlist)))
-         ((EQ expression STREAM) (progn (CLOSE STREAM) (reverse (prune xprlist)))))))
-
-; --- example:
-
-; Generate a file in which you may write the lecture example:
-; 
-; ("saengerin" "jazz" "20er-50er")
-; ("saenger" "jazz" "20er-50er")
-;
-; (read-exampleset "yourfilename") should then return the list
-;
-; (("saengerin" "jazz" "20er-50er")("saenger" "jazz" "20er-50er"))
-;
