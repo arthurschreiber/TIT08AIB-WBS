@@ -21,12 +21,12 @@
 ; --- some helpers ---
 
 (defun includes (x y)
-  (OR (equal x y) (equal x "*")))
+  (or (equal x y) (equal x "*"))
+)
 
-(defun more-general? (x y)
-  (cond ((and (null x)(null y)) t)
-        ((includes (car x) (car y)) 
-         (more-general? (cdr x)(cdr y)))))
+(defun more-general? (a b)
+  (every 'includes a b)
+)
 
 ; --- specialize ---
 
