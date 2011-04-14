@@ -7,20 +7,16 @@
 ;  generalize - a VS generalization for 2 hypotheses 
 ;  specialize - the set "G" is specialized, in this case: one element of g
 
-  
 (defun generalize (hyp1 hyp2)
-  (cond ((null hyp1) nil)
-        ((equal (car hyp1) "_") 
-         (cons (car hyp2)
-               (generalize (cdr hyp1) (cdr hyp2))))
-        ((equal (car hyp2) "_") 
-         (cons (car hyp1)
-               (generalize (cdr hyp1) (cdr hyp2))))
-        ((equal (car hyp1)(car hyp2))
-         (cons (car hyp1)
-               (generalize (cdr hyp1) (cdr hyp2))))
-        (T (cons "*" 
-                 (generalize (cdr hyp1) (cdr hyp2))))))
+  (mapcar #'(lambda (a b)
+    (cond
+      ((equal a "_") b)
+      ((equal b "_") a)
+      ((equal a b) a)
+      (T "*")
+    )
+  ) hyp1 hyp2)
+)
 
 ; --- some helpers ---
 
