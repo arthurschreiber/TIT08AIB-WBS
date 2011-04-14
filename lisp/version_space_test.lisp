@@ -24,4 +24,14 @@
   (assert-true (not (more-general? '("a" "*" "c") '("a" "b" "d"))) )
 )
 
+(define-test test-includes?
+  "should return true if both parameters are equal"
+  (assert-true (includes? "a" "a"))
+  (assert-true (not (includes? "a" "b")))
+  
+  "should return true if the first parameter is more general"
+  (assert-true (includes? "*" "a"))
+  (assert-true (includes? "*" "b"))
+)
+
 (run-tests)
