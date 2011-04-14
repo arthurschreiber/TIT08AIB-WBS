@@ -20,12 +20,12 @@
 
 ; --- some helpers ---
 
-(defun includes (x y)
+(defun includes? (x y)
   (or (equal x y) (equal x "*"))
 )
 
 (defun more-general? (a b)
-  (every 'includes a b)
+  (every 'includes? a b)
 )
 
 ; --- specialize ---
