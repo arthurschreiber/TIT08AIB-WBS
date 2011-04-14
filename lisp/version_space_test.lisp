@@ -27,6 +27,14 @@
   )
 )
 
+(define-test test-more-general?
+  "should return true if the first list is equal to the second"
+  (assert-true (more-general? '("a") '("a")))
+  (assert-true (not (more-general? '("a") '("b"))))
 
+  "should return true if the first list is more general than the second"
+  (assert-true (more-general? '("a" "*" "c") '("a" "b" "c")))
+  (assert-true (not (more-general? '("a" "*" "c") '("a" "b" "d"))))
+)
 
 (run-tests)

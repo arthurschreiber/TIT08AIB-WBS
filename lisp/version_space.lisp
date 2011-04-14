@@ -23,10 +23,10 @@
 (defun includes (x y)
   (OR (equal x y) (equal x "*")))
 
-(defun isMoreGeneral (x y)
+(defun more-general? (x y)
   (cond ((and (null x)(null y)) t)
         ((includes (car x) (car y)) 
-         (isMoreGeneral (cdr x)(cdr y)))))
+         (more-general? (cdr x)(cdr y)))))
 
 ; --- specialize ---
 
