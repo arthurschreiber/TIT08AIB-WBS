@@ -5,36 +5,30 @@
 
 (defun read-exampleset (file)
    (LET ((STREAM (OPEN file :DIRECTION :INPUT)))
-     (DO ((expression NIL (READ STREAM NIL STREAM)) 
+     (DO ((expression NIL (READ STREAM NIL STREAM))
           (xprlist nil (cons expression xprlist)))
          ((EQ expression STREAM) (progn (CLOSE STREAM) (reverse (prune xprlist)))))))
 
-; --- example:
-
-; Generate a file in which you may write the lecture example:
-; 
-; ("saengerin" "jazz" "20er-50er")
-; ("saenger" "jazz" "20er-50er")
-;
-; (read-exampleset "yourfilename") should then return the list
-;
-; (("saengerin" "jazz" "20er-50er")("saenger" "jazz" "20er-50er"))
-;
-
 (load "version_space.lisp")
 
+;; Gibt eine Liste von Negativ-Beispielen für eine bestimmt
+;; Buchauswahl `key` zurück.
 (defun negative-examples (examples key)
   (remove-if #'(lambda (example)
     (equal (first (last example)) key)
   ) examples)
 )
 
+;; Gibt eine Liste von Positiv-Beispiele für eine bestimmt
+;; Buchauswahl `key` zurück.
 (defun positive-examples (examples key)
   (remove-if-not #'(lambda (example)
     (equal (first (last example)) key)
   ) examples)
 )
 
+;; Generiert den Stern für den übergebenen Datensatz `example`
+;; mit Hilfe der Liste von Beispielen `examples`
 (defun gen-star (example examples)
   (first
     (reduce #'(lambda (vs neg_example)
@@ -43,18 +37,20 @@
   )
 )
 
+;; Wählt die Beste Generalisierung aus dem Stern `star` mit Hilfe
+;; der Positiv-Beispiele `positives` und Negativ-Beispiele `negatives`.
 (defun select-best-generalization (star positives negatives)
   ;; "Beste" Generalisierung - Erste Generalisierung
   ; (first star)
 
   ;; "Beste" Generalisierung - Letzte Generalisierung
-  (first (last star))
+  ; (first (last star))
 
   ;; "Beste" Generalisierung - Viele "*"
   ; (first (sort star #'> :key #'(lambda (g)
-  ;   (reduce (lambda (acc item)
-  ;     (if (equal item "*") (+ acc 1) acc)
-  ;   ) g :initial-value 0)
+  ;  (reduce (lambda (acc item)
+  ;    (if (equal item "*") (+ acc 1) acc)
+  ;  ) g :initial-value 0)
   ; )))
 
   ;; "Beste" Generalisierung - Wenig "*"
@@ -65,13 +61,14 @@
   ; )))
 
   ;; "Beste" Generalisierung - Möglichst viele Positive Beispiele abgedeckt
-  ; (first (sort star #'> :key #'(lambda (g)
-  ;   (reduce (lambda (acc item)
-  ;     (if (more-general? g item) (+ acc 1) acc)
-  ;   ) positives :initial-value 0)
-  ; )))
+  (first (sort star #'> :key #'(lambda (g)
+    (reduce (lambda (acc item)
+      (if (more-general? g item) (+ acc 1) acc)
+    ) positives :initial-value 0)
+  )))
 )
 
+;; Generiert die beste Generalisierung für das Beispiel `pos_example`
 (defun gen-best-generalization (pos_example negatives positives)
   (select-best-generalization
     (gen-star pos_example negatives)
@@ -80,11 +77,11 @@
   )
 )
 
-(defun gen-concept-space-helper (positives negatives k)
+(defun gen-concept-helper (positives negatives k)
   (if
     (equal 0 (length positives)) k
     (let ((g (gen-best-generalization (first positives) negatives positives)))
-      (gen-concept-space-helper
+      (gen-concept-helper
         (remove-if #'(lambda (pos_example)
           (more-general? g pos_example)
         ) positives)
@@ -93,8 +90,10 @@
   )
 )
 
-(defun gen-concept-space (positives negatives)
-  (gen-concept-space-helper positives negatives '())
+;; Generiert das Gesamtkonzept für die übergebenen Positiv-Beispiele
+;; `positives` und die Negativ-Beispiele `negatives`
+(defun gen-concept (positives negatives)
+  (gen-concept-helper positives negatives '())
 )
 
 (defun matches-for (example K)
@@ -117,13 +116,13 @@
   (let (
     (K (mapcar #'(lambda (key)
       (list key
-        (gen-concept-space
+        (gen-concept
           (positive-examples examples key)
           (negative-examples examples key)
         )
       )
     ) keys)))
-  
+
     (let (
       (matches (mapcar #'(lambda (example)
         (list example (matches-for example K))
@@ -133,25 +132,25 @@
         (format t "---------------------------------------~%")
         (format t "Datensatz: ~A~%" (butlast (first match)))
         (if (second match)
-          (format t "Mögliche Buchwahl: ~A~%" (remove-duplicates (second match)))
-          (format t "Leider keine Aussage möglich!~%")
+          (format t "Moegliche Buchwahl: ~A~%" (remove-duplicates (second match)))
+          (format t "Leider keine Aussage moeglich!~%")
         )
-        (format t "Die korrekte Buchwahl: ~A" (last (first match)))
+        (format t "Tatsaechliche Buchwahl: ~A" (last (first match)))
         (format t "~%")
         (format t "~%")
       )
-      
+
       (format t "---------------------------------------~%")
 
-      (format t "Anzahl an korrekten Vorhersagen ~A~%" (count-if #'(lambda (match)
-        (and 
+      (format t "Anzahl an eindeutigen, korrekten Vorhersagen ~A~%" (count-if #'(lambda (match)
+        (and
           (equal (list-length (second match)) 1)
           (find-if #'(lambda (x) (equal x (first (second match)))) (second match))
         )
       ) matches))
-      
+
       (format t "Anzahl an nicht eindeutigen Vorhersagen ~A~%" (count-if #'(lambda (match)
-        (and 
+        (and
           (> (list-length (second match)) 1)
         )
       ) matches))
